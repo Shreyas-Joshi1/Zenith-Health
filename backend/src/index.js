@@ -10,7 +10,7 @@ connectToDb()
         console.log("Error in communication between server and Db");
     })
 
-    app.listen(process.env.PORT || 8000, () => {
+    app.listen(process.env.PORT || 5000, () => {
         console.log("Server running at port", process.env.PORT);
     })
     

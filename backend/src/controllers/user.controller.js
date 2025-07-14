@@ -88,9 +88,19 @@ const loginUser = asyncHandler( async (req, res) => {
 
     const loggedInUser = await User.findById(existingUser._id).select("-password -refreshToken")
 
-    return res.status(200).cookie("accessToken", accessToken, {httpOnly: true, secure: true, maxAge: 7 * 24 * 60 * 60 * 1000})
-    .cookie("refreshToken", refreshToken, {httpOnly: true, secure: true, maxAge: 15 * 24 * 60 * 60 * 1000})
-    .json(new ApiResponse(200, loggedInUser, "User Logged in successfully"));
+    return res.status(200).cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  })
+  .cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    maxAge: 15 * 24 * 60 * 60 * 1000
+  })
+  .json(new ApiResponse(200, loggedInUser, "User Logged in successfully"));
 } )
 
 // logout user
@@ -103,7 +113,8 @@ const logoutUser = asyncHandler( async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite: "None"
     }
 
 
@@ -284,8 +295,8 @@ const refreshAccessToken = asyncHandler( async(req, res) => {
 
         user.refreshToken = refreshToken;
         user.save({ validateBeforeSave: false });
-        res.cookie("accessToken", accessToken, {httpOnly: true, secure: true, maxAge: 24 * 60 * 60 * 1000})
-        .cookie("refreshToken", refreshToken, {httpOnly: true, secure: true, maxAge: 10 * 24 * 60 * 60 * 1000})
+        res.cookie("accessToken", accessToken, {httpOnly: true, secure: true, sameSite: "None", maxAge: 24 * 60 * 60 * 1000})
+        .cookie("refreshToken", refreshToken, {httpOnly: true, secure: true, sameSite: "None", maxAge: 10 * 24 * 60 * 60 * 1000})
         .json(new ApiResponse(200, "Tokens updated successfully"));
 
     } catch (error) {
